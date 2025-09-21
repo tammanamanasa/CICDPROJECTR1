@@ -1,0 +1,30 @@
+services:
+  backend:
+    build:
+      context: "./backend(cicd)"
+      dockerfile: Dockerfile
+    env_file:
+      - "./backend(cicd)/.env"
+    ports:
+      - "5000:5000"
+    restart: unless-stopped
+    networks:
+      - app-network
+
+  frontend:
+    build:
+      context: "./frontend(cicd)"
+      dockerfile: Dockerfile
+      args:
+        - REACT_APP_API_URL=http://backend:5000
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend
+    restart: unless-stopped
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
